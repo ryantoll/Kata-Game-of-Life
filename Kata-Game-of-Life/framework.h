@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <tchar.h>
+#include <vector>
 
 // Global Variables:
 extern HINSTANCE g_hInst;                              // current instance

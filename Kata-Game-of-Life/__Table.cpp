@@ -3,8 +3,8 @@
 #include "__WINDOW.h"
 
 using namespace std;
-using namespace WINDOWS_GUI;
 using namespace RYANS_UTILITIES;
+using namespace RYANS_UTILITIES::WINDOWS_GUI;
 
 
 // Initial window setup
@@ -24,9 +24,9 @@ void WINDOWS_TABLE::AddRow() noexcept {
 	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
 
 	while (cell_ID.Column() < m_NumColumns) {
-		window = ConstructChildWindow("button"s, g_hWnd, cell_ID, g_hInst);
+		window = ConstructChildWindow("static"s, g_hWnd, cell_ID);
 		pos.X(cell_ID.Column() * m_Width).Y(m_NumRows * m_Height);
-		window.Move(pos, size);
+		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementColumn();
 	}
 	++m_NumRows;
@@ -40,9 +40,9 @@ void WINDOWS_TABLE::AddColumn() noexcept {
 	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
 
 	while (cell_ID.Row() < m_NumRows) {
-		window = ConstructChildWindow("button"s, g_hWnd, cell_ID, g_hInst);
+		window = ConstructChildWindow("static"s, g_hWnd, cell_ID);
 		pos.X(cell_ID.Column() * m_Width).Y(cell_ID.Row() * m_Height);
-		window.Move(pos, size);
+		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementRow();
 	}
 }

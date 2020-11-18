@@ -36,6 +36,9 @@
     <ClInclude Include="__Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__CELL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Kata-Game-of-Life.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="__Table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="__CELL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
