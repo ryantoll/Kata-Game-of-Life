@@ -81,6 +81,12 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
+    if (!RegisterClassExW(&wcex)) { return false; }
+
+    wcex.lpfnWndProc = CellWindowProc;
+    wcex.hbrBackground = (HBRUSH)(nullptr);
+    wcex.lpszMenuName = nullptr;
+    wcex.lpszClassName = L"Cell";
     return RegisterClassExW(&wcex);
 }
 

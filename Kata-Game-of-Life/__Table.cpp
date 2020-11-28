@@ -9,8 +9,8 @@ using namespace RYANS_UTILITIES::WINDOWS_GUI;
 
 // Initial window setup
 void WINDOWS_TABLE::InitializeTable() noexcept {
-	for (auto i = 0; i < 20; ++i) { AddColumn(); }
-	for (auto i = 0; i < 20; ++i) { AddRow(); }
+	for (auto i = 0; i < layoutWidth; ++i) { AddColumn(); }
+	for (auto i = 0; i < layoutHeight; ++i) { AddRow(); }
 	Redraw();
 }
 
@@ -24,7 +24,7 @@ void WINDOWS_TABLE::AddRow() noexcept {
 	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
 
 	while (cell_ID.Column() < m_NumColumns) {
-		window = ConstructChildWindow("static"s, g_hWnd, cell_ID);
+		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
 		pos.X(cell_ID.Column() * m_Width).Y(m_NumRows * m_Height);
 		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementColumn();
@@ -40,11 +40,12 @@ void WINDOWS_TABLE::AddColumn() noexcept {
 	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
 
 	while (cell_ID.Row() < m_NumRows) {
-		window = ConstructChildWindow("static"s, g_hWnd, cell_ID);
+		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
 		pos.X(cell_ID.Column() * m_Width).Y(cell_ID.Row() * m_Height);
 		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementRow();
 	}
+	window.Style();
 }
 
 // Remove bottom row of cells.

@@ -9,6 +9,10 @@
 namespace RYANS_UTILITIES {
 	namespace WINDOWS_GUI {
 
+		// class WINDOW_POSITION;
+		// class WINDOW_DIMENSIONS;
+		// class PAINT_TOKEN;
+
 		class WINDOW_POSITION {
 			int m_xPos, m_yPos;
 		public:
@@ -25,6 +29,21 @@ namespace RYANS_UTILITIES {
 			WINDOW_DIMENSIONS& Height(const int h) noexcept { m_height = h; return *this; }
 			[[nodiscard]] int Width() const noexcept { return m_width; }
 			[[nodiscard]] int Height() const noexcept { return m_height; }
+		};
+
+		// A PAINT_TOKEN represents ownership of a window ready for Windows drawing operations
+		// Pass in the token in place of an HDC in any C-style Windows drawing funciton
+		// Token automatically ends drawing and releases resources when it falls out of scope
+		// Token must be released in the same thread in which it was created per Windows docs
+		class PAINT_TOKEN {
+			friend class WINDOW;
+			HDC m_DeviceContext{ nullptr };
+			HWND m_Window{ nullptr };
+			explicit PAINT_TOKEN(HWND window) : m_Window(window) { m_DeviceContext = GetDC(window); }
+		public:
+			~PAINT_TOKEN() { ReleaseDC(m_Window, m_DeviceContext); }
+			explicit operator bool() const noexcept { return m_DeviceContext == nullptr; }
+			operator HDC() const noexcept { return m_DeviceContext; }
 		};
 
 		// This is a wrapper class to handle classic C-style Windows API calls in an object-oriented fashion
@@ -67,6 +86,8 @@ namespace RYANS_UTILITIES {
 			[[nodiscard]] std::string Text() const noexcept { return EditBoxToString(m_Handle); }
 			[[nodiscard]] std::wstring Wtext() const noexcept { return EditBoxToWstring(m_Handle); }
 			[[nodiscard]] LONG_PTR Style() const noexcept { return GetWindowLongPtr(m_Handle, GWL_STYLE); }
+			[[nodiscard]] PAINT_TOKEN BeginPaint() const noexcept { return PAINT_TOKEN{ m_Handle }; }
+			[[nodiscard]] RECT GetClientRectangle() const noexcept { RECT rekt{ }; ::GetClientRect(m_Handle, &rekt); return rekt; }
 
 			// Move, optionally resize
 			WINDOW& Move(const WINDOW_POSITION position) noexcept {
@@ -115,6 +136,40 @@ namespace RYANS_UTILITIES {
 			auto h = CreateWindow(StringToWstring(type).c_str(), StringToWstring(title).c_str(), WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, nullptr, nullptr, inst, NULL);
 			return WINDOW{ h };
 		}
+
+
+		/*class WINDOW_POSITION {
+			int m_xPos, m_yPos;
+		public:
+			WINDOW_POSITION& X(const int x) noexcept { m_xPos = x; return *this; }
+			WINDOW_POSITION& Y(const int y) noexcept { m_yPos = y; return *this; }
+			[[nodiscard]] int X() const noexcept { return m_xPos; }
+			[[nodiscard]] int Y() const noexcept { return m_yPos; }
+		};
+
+		class WINDOW_DIMENSIONS {
+			int m_width, m_height;
+		public:
+			WINDOW_DIMENSIONS& Width(const int w) noexcept { m_width = w; return *this; }
+			WINDOW_DIMENSIONS& Height(const int h) noexcept { m_height = h; return *this; }
+			[[nodiscard]] int Width() const noexcept { return m_width; }
+			[[nodiscard]] int Height() const noexcept { return m_height; }
+		};
+
+		// A PAINT_TOKEN represents ownership of a window ready for Windows drawing operations
+		// Pass in the token in place of an HDC in any C-style Windows drawing funciton
+		// Token automatically ends drawing and releases resources when it falls out of scope
+		// Token must be released in the same thread in which it was created per Windows docs
+		class PAINT_TOKEN {
+			friend class WINDOW;
+			HDC m_DeviceContext{ nullptr };
+			HWND m_Window{ nullptr };
+			explicit PAINT_TOKEN(HWND window) : m_Window(window) { GetDC(window); }
+		public:
+			~PAINT_TOKEN() { ReleaseDC(m_Window, m_DeviceContext); }
+			explicit operator bool() const noexcept { return m_DeviceContext == nullptr; }
+			operator HDC() const noexcept { return m_DeviceContext; }
+		};*/
 	}
 }
 
