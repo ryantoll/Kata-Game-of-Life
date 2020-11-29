@@ -97,13 +97,33 @@ unsigned int SurroundingCellNumber(const CELL_POSITION position, const TIME_SLIC
 	return count;
 }
 
+void SetNextCellState(CELL_POSITION position, const TIME_SLICE& previousGeneration, TIME_SLICE& nextGeneration) noexcept {
+	for (auto position : allPositions) {
+		auto neighborCount = previousGeneration.NeighborCount(position);
+		if (neighborCount < 2 || neighborCount > 3) {
+			nextGeneration[position].State(LIFE_STATE::DEAD);
+		}
+		else if (neighborCount == 3) {
+			nextGeneration[position].State(LIFE_STATE::ALIVE);
+		}
+		else if (neighborCount == 2 && previousGeneration.LifeState(position) == LIFE_STATE::ALIVE) {
+			nextGeneration[position].State(LIFE_STATE::ALIVE);
+		}
+		else {
+			nextGeneration[position].State(LIFE_STATE::DEAD);
+		}
+	}
+}
+
 void LIFE_HISTORY::CalculateNextGeneration() noexcept {
 	auto nextGeneration = TIME_SLICE{ };
 	nextGeneration.status = TIME_SLICE::STATUS::GENERATED;
-	const auto& timeSlice = m_History.back();
-
+	const auto& previousGeneration = m_History.back();
+	
 	// Calculate all living cells
-	for (auto position: allPositions) {
+	auto calc = [&](CELL_POSITION position) { SetNextCellState(position, previousGeneration, nextGeneration); };
+	std::for_each(std::execution::par_unseq, allPositions.begin(), allPositions.end(), calc);
+	/*for (auto position: allPositions) {
 		auto neighborCount = timeSlice.NeighborCount(position);
 		if (neighborCount < 2 || neighborCount > 3) {
 			nextGeneration[position].State(LIFE_STATE::DEAD);
@@ -117,7 +137,7 @@ void LIFE_HISTORY::CalculateNextGeneration() noexcept {
 		else {
 			nextGeneration[position].State(LIFE_STATE::DEAD);
 		}
-	}
+	}*/
 
 	// Then, calculate next generation living neighbor count
 	/*for (auto position : allPositions) {

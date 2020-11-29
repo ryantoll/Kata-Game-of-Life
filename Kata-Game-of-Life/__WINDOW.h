@@ -117,6 +117,22 @@ namespace RYANS_UTILITIES {
 			WNDPROC Procedure(WNDPROC procedure) noexcept {
 				return reinterpret_cast<WNDPROC>(SetWindowLongPtr(m_Handle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(procedure)));
 			}
+
+			WINDOW& Redraw() noexcept {
+				auto rekt = RECT{ };
+				::GetClientRect(m_Handle, &rekt);
+				InvalidateRect(m_Handle, &rekt, false);
+				SendMessage(m_Handle, WM_PAINT, NULL, NULL);
+				return *this;
+			}
+
+			const WINDOW& Redraw() const noexcept {
+				auto rekt = RECT{ };
+				::GetClientRect(m_Handle, &rekt);
+				InvalidateRect(m_Handle, &rekt, false);
+				SendMessage(m_Handle, WM_PAINT, NULL, NULL);
+				return *this;
+			}
 		};
 
 		// Create a child window

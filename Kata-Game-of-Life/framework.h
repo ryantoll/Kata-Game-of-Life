@@ -11,6 +11,8 @@
 #include <windows.h>
 // C RunTime Header Files
 #include <stdlib.h>
+#include <algorithm>
+#include <execution>
 #include <malloc.h>
 #include <memory>
 #include <string>

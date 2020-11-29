@@ -5,25 +5,25 @@ using namespace std;
 using namespace RYANS_UTILITIES;
 using namespace RYANS_UTILITIES::WINDOWS_GUI;
 auto g_table = WINDOWS_TABLE{ };
+auto allCells = vector<WINDOW>{ };
 LIFE_HISTORY history{ };
 auto aliveBrush = CreateSolidBrush(RGB(0, 100, 0));
 auto deadBrush = CreateSolidBrush(RGB(100, 0, 0));
 
 LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
-    case WM_CREATE: { g_hWnd = hFrame; g_table.InitializeTable(); } break;
+    case WM_CREATE: { 
+        g_hWnd = hFrame;
+        g_table.InitializeTable();
+        for (auto position : allPositions) {
+            allCells.push_back(WINDOW{ WINDOWS_TABLE::CELL_ID{ position } });
+        }
+    } break;
     case WM_KEYDOWN: {
         switch (wParam) {
         case VK_RETURN: { 
             history.Advance();
-            RECT rekt;
-            for (auto position: allPositions) {
-                auto id = WINDOWS_TABLE::CELL_ID{ position };
-                auto cell = WINDOW{ id };
-                GetClientRect(cell, &rekt);
-                InvalidateRect(cell, &rekt, false);
-                SendMessage(cell, WM_PAINT, NULL, NULL);
-            }
+            for (auto cell: allCells) { cell.Redraw();  }
         } break;
         }
     } break;
@@ -57,10 +57,7 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
             auto state = frame[id].State();
             if (state == LIFE_STATE::DEAD) { frame[id].State(LIFE_STATE::ALIVE); }
             else { frame[id].State(LIFE_STATE::DEAD); }
-            auto rekt = RECT{ };
-            GetClientRect(hCell, &rekt);
-            InvalidateRect(hCell, &rekt, false);
-            SendMessage(hCell, WM_PAINT, NULL, NULL);
+            WINDOW{ id }.Redraw();
             SetFocus(g_hWnd);
         } break;
         case WM_PAINT: {
