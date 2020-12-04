@@ -122,7 +122,7 @@ void LIFE_HISTORY::CalculateNextGeneration() noexcept {
 	
 	// Calculate all living cells
 	auto calc = [&](CELL_POSITION position) { SetNextCellState(position, previousGeneration, nextGeneration); };
-	std::for_each(std::execution::par_unseq, allPositions.begin(), allPositions.end(), calc);
+	std::for_each(std::execution::seq, allPositions.begin(), allPositions.end(), calc);
 	/*for (auto position: allPositions) {
 		auto neighborCount = timeSlice.NeighborCount(position);
 		if (neighborCount < 2 || neighborCount > 3) {
