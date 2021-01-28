@@ -25,10 +25,10 @@ void WINDOWS_TABLE::AddRow() noexcept {
 	size.width = m_Width; size.height = m_Height;
 
 	while (cell_ID.Column() < m_NumColumns) {
-		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
 		pos.x = cell_ID.Column() * m_Width;
 		pos.y = m_NumRows * m_Height;
-		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
+		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID, pos, size);
+		window.Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementColumn();
 	}
 	++m_NumRows;
@@ -43,13 +43,13 @@ void WINDOWS_TABLE::AddColumn() noexcept {
 	size.width = m_Width; size.height = m_Height;
 
 	while (cell_ID.Row() < m_NumRows) {
-		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
 		pos.x = cell_ID.Column() * m_Width;
 		pos.y = cell_ID.Row() * m_Height;
-		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
+		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID, pos, size);
+		window.Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementRow();
 	}
-	window.Style();
+	++m_NumColumns;
 }
 
 // Remove bottom row of cells.
