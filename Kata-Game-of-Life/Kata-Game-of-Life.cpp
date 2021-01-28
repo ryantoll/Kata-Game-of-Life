@@ -55,8 +55,9 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
             auto& frame = history[history.Generation()];
             auto id = WINDOWS_TABLE::CELL_ID{ hCell };
             auto state = frame[id].State();
-            if (state == LIFE_STATE::DEAD) { frame[id].State(LIFE_STATE::ALIVE); }
-            else { frame[id].State(LIFE_STATE::DEAD); }
+            //if (state == LIFE_STATE::DEAD) { frame[id].State(LIFE_STATE::ALIVE); }
+            //else { frame[id].State(LIFE_STATE::DEAD); }
+            frame[id].TogleDeadAlive();
             WINDOW{ id }.Redraw();
             SetFocus(g_hWnd);
         } break;
@@ -68,7 +69,8 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
             auto rekt = RECT{ };
             GetClientRect(myCell, &rekt);
             auto cellToken = myCell.BeginPaint();
-            if (state == LIFE_STATE::ALIVE) { FillRect(cellToken, &rekt, aliveBrush); }
+            auto isAlive = EnumHasFlag(state, LIFE_STATE::ALIVE);
+            if (isAlive) { FillRect(cellToken, &rekt, aliveBrush); }
             else { FillRect(cellToken, &rekt, deadBrush); }
         } break;
         default: { DefWindowProc(hCell, message, wParam, lParam); }
