@@ -9,26 +9,14 @@
 namespace RYANS_UTILITIES {
 	namespace WINDOWS_GUI {
 
-		// class WINDOW_POSITION;
-		// class WINDOW_DIMENSIONS;
-		// class PAINT_TOKEN;
-
-		class WINDOW_POSITION {
-			int m_xPos, m_yPos;
-		public:
-			WINDOW_POSITION& X(const int x) noexcept { m_xPos = x; return *this; }
-			WINDOW_POSITION& Y(const int y) noexcept { m_yPos = y; return *this; }
-			[[nodiscard]] int X() const noexcept { return m_xPos; }
-			[[nodiscard]] int Y() const noexcept { return m_yPos; }
+		struct WINDOW_POSITION {
+			int x{ 0 };
+			int y{ 0 };
 		};
 
-		class WINDOW_DIMENSIONS {
-			int m_width, m_height;
-		public:
-			WINDOW_DIMENSIONS& Width(const int w) noexcept { m_width = w; return *this; }
-			WINDOW_DIMENSIONS& Height(const int h) noexcept { m_height = h; return *this; }
-			[[nodiscard]] int Width() const noexcept { return m_width; }
-			[[nodiscard]] int Height() const noexcept { return m_height; }
+		struct WINDOW_DIMENSIONS {
+			int width{ 0 };
+			int height{ 0 };
 		};
 
 		// A PAINT_TOKEN represents ownership of a window ready for Windows drawing operations
@@ -42,7 +30,11 @@ namespace RYANS_UTILITIES {
 			explicit PAINT_TOKEN(HWND window) : m_Window(window) { m_DeviceContext = GetDC(window); }
 		public:
 			~PAINT_TOKEN() { ReleaseDC(m_Window, m_DeviceContext); }
-			explicit operator bool() const noexcept { return m_DeviceContext == nullptr; }
+			PAINT_TOKEN(const PAINT_TOKEN& token) = delete;
+			PAINT_TOKEN& operator=(const PAINT_TOKEN & token) = delete;
+			PAINT_TOKEN(PAINT_TOKEN&& token) = default;
+			PAINT_TOKEN& operator=(PAINT_TOKEN&& token) = default;
+			explicit operator bool() const noexcept { return m_DeviceContext; }
 			operator HDC() const noexcept { return m_DeviceContext; }
 		};
 
@@ -72,14 +64,19 @@ namespace RYANS_UTILITIES {
 			HMENU Menu() const noexcept { return reinterpret_cast<HMENU>(GetWindowLongPtr(m_Handle, GWLP_ID)); }
 			void Destroy() noexcept { DestroyWindow(m_Handle); }
 			RECT GetClientRect() const noexcept { auto rekt = RECT{ }; ::GetClientRect(m_Handle, &rekt); return rekt; }
+			
 			WINDOW& Focus() noexcept { SetFocus(m_Handle); return *this; }
 			const WINDOW& Focus() const noexcept { SetFocus(m_Handle); return *this; }
+			
 			WINDOW& Text(const std::string& title) noexcept { SetWindowText(m_Handle, StringToWstring(title).c_str()); return *this; }
 			const WINDOW& Text(const std::string& title) const noexcept { SetWindowText(m_Handle, StringToWstring(title).c_str()); return *this; }
+			
 			WINDOW& Wtext(const std::wstring& title) noexcept { SetWindowText(m_Handle, title.c_str()); return *this; }
 			const WINDOW& Wtext(const std::wstring& title) const noexcept { SetWindowText(m_Handle, title.c_str()); return *this; }
+			
 			WINDOW& Message(UINT message, WPARAM wparam, LPARAM lparam) noexcept { SendMessage(m_Handle, message, wparam, lparam); return *this; }
 			const WINDOW& Message(UINT message, WPARAM wparam, LPARAM lparam) const noexcept { SendMessage(m_Handle, message, wparam, lparam); return *this; }
+			
 			WINDOW& Style(LONG_PTR style) noexcept { SetWindowLongPtr(m_Handle, GWL_STYLE, style); return *this; }
 			const WINDOW& Style(LONG_PTR style) const noexcept { SetWindowLongPtr(m_Handle, GWL_STYLE, style); return *this; }
 
@@ -91,19 +88,19 @@ namespace RYANS_UTILITIES {
 
 			// Move, optionally resize
 			WINDOW& Move(const WINDOW_POSITION position) noexcept {
-				SetWindowPos(m_Handle, nullptr, position.X(), position.Y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+				SetWindowPos(m_Handle, nullptr, position.x, position.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 				return *this;
 			}
 
 			// Move, optionally resize
 			WINDOW& Move(const WINDOW_POSITION position, const WINDOW_DIMENSIONS size) noexcept {
-				SetWindowPos(m_Handle, nullptr, position.X(), position.Y(), size.Width(), size.Height(), SWP_NOZORDER);
+				SetWindowPos(m_Handle, nullptr, position.x, position.y, size.width, size.height, SWP_NOZORDER);
 				return *this;
 			}
 
 			// Resize, optionally move
 			WINDOW& Resize(const WINDOW_DIMENSIONS size) noexcept {
-				SetWindowPos(m_Handle, nullptr, 0, 0, size.Width(), size.Height(), SWP_NOZORDER | SWP_NOMOVE);
+				SetWindowPos(m_Handle, nullptr, 0, 0, size.width, size.height, SWP_NOZORDER | SWP_NOMOVE);
 				return *this;
 			}
 
@@ -136,10 +133,25 @@ namespace RYANS_UTILITIES {
 		};
 
 		// Create a child window
-		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id) {
-			auto h = CreateWindow(StringToWstring(type).c_str(), L"", WS_CHILD | WS_BORDER | WS_VISIBLE,
-				0, 0, 0, 0, parent, id, reinterpret_cast<HINSTANCE>(GetWindowLongPtr(parent, GWLP_HINSTANCE)), NULL);
+		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id, WINDOW_POSITION position, WINDOW_DIMENSIONS dimensions) {
+			auto h = CreateWindow(StringToWstring(type).c_str(), L"", WS_CHILD | WS_BORDER | WS_VISIBLE, position.x, position.y,
+				dimensions.width, dimensions.height, parent, id, reinterpret_cast<HINSTANCE>(GetWindowLongPtr(parent, GWLP_HINSTANCE)), NULL);
 			return WINDOW{ h };
+		}
+
+		// Create a child window
+		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id, WINDOW_POSITION position) {
+			return ConstructChildWindow(type, parent, id, position, WINDOW_DIMENSIONS{ });
+		}
+
+		// Create a child window
+		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id, WINDOW_DIMENSIONS dimensions) {
+			return ConstructChildWindow(type, parent, id, WINDOW_POSITION{ }, dimensions);
+		}
+
+		// Create a child window
+		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id) {
+			return ConstructChildWindow(type, parent, id, WINDOW_POSITION{ }, WINDOW_DIMENSIONS{ });
 		}
 
 		// Create a child window
@@ -152,40 +164,6 @@ namespace RYANS_UTILITIES {
 			auto h = CreateWindow(StringToWstring(type).c_str(), StringToWstring(title).c_str(), WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, nullptr, nullptr, inst, NULL);
 			return WINDOW{ h };
 		}
-
-
-		/*class WINDOW_POSITION {
-			int m_xPos, m_yPos;
-		public:
-			WINDOW_POSITION& X(const int x) noexcept { m_xPos = x; return *this; }
-			WINDOW_POSITION& Y(const int y) noexcept { m_yPos = y; return *this; }
-			[[nodiscard]] int X() const noexcept { return m_xPos; }
-			[[nodiscard]] int Y() const noexcept { return m_yPos; }
-		};
-
-		class WINDOW_DIMENSIONS {
-			int m_width, m_height;
-		public:
-			WINDOW_DIMENSIONS& Width(const int w) noexcept { m_width = w; return *this; }
-			WINDOW_DIMENSIONS& Height(const int h) noexcept { m_height = h; return *this; }
-			[[nodiscard]] int Width() const noexcept { return m_width; }
-			[[nodiscard]] int Height() const noexcept { return m_height; }
-		};
-
-		// A PAINT_TOKEN represents ownership of a window ready for Windows drawing operations
-		// Pass in the token in place of an HDC in any C-style Windows drawing funciton
-		// Token automatically ends drawing and releases resources when it falls out of scope
-		// Token must be released in the same thread in which it was created per Windows docs
-		class PAINT_TOKEN {
-			friend class WINDOW;
-			HDC m_DeviceContext{ nullptr };
-			HWND m_Window{ nullptr };
-			explicit PAINT_TOKEN(HWND window) : m_Window(window) { GetDC(window); }
-		public:
-			~PAINT_TOKEN() { ReleaseDC(m_Window, m_DeviceContext); }
-			explicit operator bool() const noexcept { return m_DeviceContext == nullptr; }
-			operator HDC() const noexcept { return m_DeviceContext; }
-		};*/
 	}
 }
 

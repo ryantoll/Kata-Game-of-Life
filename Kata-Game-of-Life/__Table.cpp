@@ -21,11 +21,13 @@ void WINDOWS_TABLE::AddRow() noexcept {
 	auto cell_ID = CELL_ID{ }.Row(m_NumRows).Column(0);
 	auto window = WINDOW{ };
 	auto pos = WINDOW_POSITION{ };
-	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
+	auto size = WINDOW_DIMENSIONS{ };
+	size.width = m_Width; size.height = m_Height;
 
 	while (cell_ID.Column() < m_NumColumns) {
 		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
-		pos.X(cell_ID.Column() * m_Width).Y(m_NumRows * m_Height);
+		pos.x = cell_ID.Column() * m_Width;
+		pos.y = m_NumRows * m_Height;
 		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementColumn();
 	}
@@ -37,11 +39,13 @@ void WINDOWS_TABLE::AddColumn() noexcept {
 	auto cell_ID = CELL_ID{ }.Row(0).Column(++m_NumColumns);
 	auto window = WINDOW{ };
 	auto pos = WINDOW_POSITION{ };
-	auto size = WINDOW_DIMENSIONS{ }.Width(m_Width).Height(m_Height);
+	auto size = WINDOW_DIMENSIONS{ };
+	size.width = m_Width; size.height = m_Height;
 
 	while (cell_ID.Row() < m_NumRows) {
 		window = ConstructChildWindow("Cell"s, g_hWnd, cell_ID);
-		pos.X(cell_ID.Column() * m_Width).Y(cell_ID.Row() * m_Height);
+		pos.x = cell_ID.Column() * m_Width;
+		pos.y = cell_ID.Row() * m_Height;
 		window.Move(pos, size).Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementRow();
 	}
