@@ -49,7 +49,6 @@ void WINDOWS_TABLE::AddColumn() noexcept {
 		window.Style(window.Style() | SS_NOTIFY);
 		cell_ID.IncrementRow();
 	}
-	++m_NumColumns;
 }
 
 // Remove bottom row of cells.
