@@ -18,6 +18,7 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
         for (auto position : allPositions) {
             allCells.push_back(WINDOW{ WINDOWS_TABLE::CELL_ID{ position } });
         }
+        SendMessage(hFrame, WM_PAINT, NULL, NULL);  // Ensure window draws on load
     } break;
     case WM_KEYDOWN: {
         switch (wParam) {
