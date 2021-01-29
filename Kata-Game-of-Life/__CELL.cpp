@@ -62,8 +62,8 @@ TIME_SLICE::PROXY_CELL& TIME_SLICE::PROXY_CELL::State(LIFE_STATE state) noexcept
 
 		// Update predicted next generation expected life state
 		if (neighborCell.neighborCount == 3 || 
-			neighborCell.neighborCount == 2 && EnumHasFlag(neighborCell.state, LIFE_STATE::ALIVE)) {
-			neighborCell.state = EnumAddFlag(neighborCell.state, LIFE_STATE::WILL_LIVE);
+			neighborCell.neighborCount == 2 && EnumHasFlag<LIFE_STATE>(neighborCell.state, LIFE_STATE::ALIVE)) {
+			neighborCell.state = EnumAddFlag<LIFE_STATE>(neighborCell.state, LIFE_STATE::WILL_LIVE);
 		}
 		else { neighborCell.state = EnumRemoveFlag(neighborCell.state, LIFE_STATE::WILL_LIVE); }
 	}

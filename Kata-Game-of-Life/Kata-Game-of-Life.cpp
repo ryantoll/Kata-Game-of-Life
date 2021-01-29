@@ -7,8 +7,35 @@ using namespace RYANS_UTILITIES::WINDOWS_GUI;
 auto g_table = WINDOWS_TABLE{ };
 auto allCells = vector<WINDOW>{ };
 LIFE_HISTORY history{ };
-auto aliveBrush = CreateSolidBrush(RGB(0, 100, 0));
-auto deadBrush = CreateSolidBrush(RGB(100, 0, 0));
+
+//#define EXTENDED_LIFESTATE_COLORING
+
+#ifdef EXTENDED_LIFESTATE_COLORING
+auto brushes = map<LIFE_STATE, HBRUSH>{
+    { LIFE_STATE::STABLE_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::RECENTLY_DEAD , CreateSolidBrush(RGB(100, 0, 0))},
+    { LIFE_STATE::ALIVE , CreateSolidBrush(RGB(0, 0, 255))},
+    { LIFE_STATE::DYING , CreateSolidBrush(RGB(255, 0, 255))},
+    { LIFE_STATE::WILL_LIVE , CreateSolidBrush(RGB(0, 100, 0))},
+    { LIFE_STATE::VASCILATING , CreateSolidBrush(RGB(100, 0, 100))},
+    { LIFE_STATE::RECENTLY_GROWN , CreateSolidBrush(RGB(0, 255, 255))},
+    { LIFE_STATE::STABLE_LIVING , CreateSolidBrush(RGB(255, 255, 255))},
+};
+#else
+auto brushes = map<LIFE_STATE, HBRUSH>{
+    { LIFE_STATE::STABLE_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::RECENTLY_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::ALIVE , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::DYING , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::WILL_LIVE , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::VASCILATING , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::RECENTLY_GROWN , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::STABLE_LIVING , CreateSolidBrush(RGB(0, 255, 0))},
+};
+#endif // EXTENDED_LIFESTATE_COLORING
+
+
+
 
 LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -39,7 +66,10 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
         }
         break;
     case WM_PAINT: { } break;
-    case WM_DESTROY: { DeleteObject(aliveBrush); PostQuitMessage(0); } break;
+    case WM_DESTROY: { 
+        for (auto brushPair : brushes) { DeleteObject(brushPair.second); }
+        PostQuitMessage(0); 
+    } break;
     default: { return DefWindowProc(hFrame, message, wParam, lParam); }
     }
     return 0;
@@ -56,10 +86,11 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
             auto& frame = history[history.Generation()];
             auto id = WINDOWS_TABLE::CELL_ID{ hCell };
             auto state = frame[id].State();
-            //if (state == LIFE_STATE::DEAD) { frame[id].State(LIFE_STATE::ALIVE); }
-            //else { frame[id].State(LIFE_STATE::DEAD); }
             frame[id].TogleDeadAlive();
             WINDOW{ id }.Redraw();
+            for (auto neighbor : adjacencyList[id]) {
+                WINDOW{ WINDOWS_TABLE::CELL_ID{ neighbor } }.Redraw();  // Re-render neighbors 
+            }
             SetFocus(g_hWnd);
         } break;
         case WM_PAINT: {
@@ -67,12 +98,9 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
             auto id = WINDOWS_TABLE::CELL_ID{ hCell };
             auto state = frame.LifeState(CELL_POSITION{ id });
             auto myCell = WINDOW{ id };
-            auto rekt = RECT{ };
-            GetClientRect(myCell, &rekt);
+            auto rekt = myCell.GetClientRect();
             auto cellToken = myCell.BeginPaint();
-            auto isAlive = EnumHasFlag(state, LIFE_STATE::ALIVE);
-            if (isAlive) { FillRect(cellToken, &rekt, aliveBrush); }
-            else { FillRect(cellToken, &rekt, deadBrush); }
+            FillRect(cellToken, &rekt, brushes[state]);
         } break;
         default: { DefWindowProc(hCell, message, wParam, lParam); }
     }

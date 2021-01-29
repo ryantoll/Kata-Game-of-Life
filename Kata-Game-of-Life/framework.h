@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <execution>
 #include <malloc.h>
+#include <map>
 #include <memory>
 #include <string>
 #include <tchar.h>
