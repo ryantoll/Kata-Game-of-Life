@@ -150,8 +150,8 @@ void LIFE_HISTORY::CalculateNextGeneration() noexcept {
 	// Then, compute the predicted next state after that
 	auto calc1 = [&](CELL_POSITION position) { TIME_SLICE::SetNextCellState(position, previousGeneration, nextGeneration); };
 	auto calc2 = [&](CELL_POSITION position) { TIME_SLICE::CalculateNextLifeState(position, nextGeneration); };
-	std::for_each(std::execution::seq, allPositions.begin(), allPositions.end(), calc1);
-	std::for_each(std::execution::seq, allPositions.begin(), allPositions.end(), calc2);
+	std::for_each(std::execution::par_unseq, allPositions.begin(), allPositions.end(), calc1);
+	std::for_each(std::execution::par_unseq, allPositions.begin(), allPositions.end(), calc2);
 
 	m_History.push_back(std::move(nextGeneration));
 	++m_Generation;
