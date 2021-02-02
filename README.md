@@ -8,6 +8,8 @@ Click cell to toggle dead/alive
 Press return-key to progress system by 1 generation
 Hold return-key to rapidly progress system
 
+Note: There may be occasional rendering issues upon startup. If so, re-size the window. This will trigger a fresh redraw and will likely fix the issue.
+
 Design Features:
 
 The WINDOW library is meant to be a lightweight wrapper for foundational Win32 C-style API calls that is perfectly interoperable with the official API. Many WINDOW functions simply provide a more appealing Object-Oriented interface that delegates straight to C-style functions. This interface typically provides much greater clarity & concision as compared to the equivalent C-style calls. Function calls tend to use fewer arguments, arguments are difficult to mix up, and many functions return a reference back to the WINDOW to allow chaining of commands. Custom structs are used to avoid argument mixups, such as X-position, Y-position, Width, & Height. To top it all off, the WINDOW object implicitly converts to a window handle, which allows it to be passed into any function that takes a HWND. This library can thus be brought into an existing code base for even a few lines of code without requiring any GUI paradigm change.
