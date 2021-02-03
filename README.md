@@ -30,8 +30,8 @@ Further Work:
 
 1. Make the "game" progress based upon a timer rather than a keystroke. Add Play/Pause button to support this. Editing a cell automatically pauses the game to ensure consistent calculations.
 
-2. <s>Add (optional?) more detailed color codes. It might be helpful for users to be able to see which cells are stable, about to grow, recently grown(?), about to die, or recently dead. Packed flags can be used to store multiple overlapping states in the same variable to facilitate this. A logical color scheme would be needed to communcate this. Color scales might coincide with the packed flags in a way that would be sensible to users. For example RBG values of 0 or 255 could correspond to the flags alive/dead, will grow/stable, will die/stable.</s>
+2. Performance upgrades as discussed above based upon testing.
 
-3. Performance upgrades as discussed above based upon testing.
+3. Further GUI library upgrades as needs arise.
 
-4. Further GUI library upgrades as needs arise.
+4. Improved rendering speed as this seems to be the primary bottleneck.
