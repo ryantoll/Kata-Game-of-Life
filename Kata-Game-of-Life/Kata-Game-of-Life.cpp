@@ -11,6 +11,9 @@ auto pause = true;
 constexpr auto timeIncrement = 10ull; // miliseconds
 constexpr auto timerId = 1000;
 constexpr auto WM_ADVANCE_GENERATION = 1001;
+constexpr auto ID_PLAY_PAUSE = 1002ul;
+
+auto playPauseDisplay = WINDOW{ };
 
 //#define EXTENDED_LIFESTATE_COLORING
 
@@ -39,7 +42,10 @@ auto brushes = map<LIFE_STATE, HBRUSH>{
 #endif // EXTENDED_LIFESTATE_COLORING
 
 
-
+void TogglePause() {
+    pause = !pause;
+    playPauseDisplay.Text(pause ? "Pause" : "Play");
+}
 
 LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -49,11 +55,15 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
             for (auto position : allPositions) {
                 allCells.push_back(WINDOW{ WINDOWS_TABLE::CELL_ID{ position } });
             }
+            auto pos = WINDOW_POSITION{ 650 , 0 };
+            auto size = WINDOW_DIMENSIONS{ 100 , 50 };
+            playPauseDisplay = ConstructChildWindow("static", hFrame, ID_PLAY_PAUSE);
+            playPauseDisplay.Move(pos, size).Text("Pause");
         } break;
         case WM_KEYDOWN: {
             switch (wParam) {
                 case VK_RETURN: { 
-                    pause = !pause;
+                    TogglePause();
                     if (!pause) { SendMessage(hFrame, WM_COMMAND, MAKEWPARAM(WM_ADVANCE_GENERATION, NULL), NULL); } // Restart life process
                 } break;
             }
@@ -112,7 +122,7 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
                     WINDOW{ WINDOWS_TABLE::CELL_ID{ neighbor } }.Redraw();  // Re-render neighbors 
                 }
                 SetFocus(g_hWnd);
-                pause = true;
+                if (!pause) { TogglePause(); }  // Pause if not already paused
             } break;
             case WM_PAINT: {
                 const auto& frame = history[history.Generation()];
