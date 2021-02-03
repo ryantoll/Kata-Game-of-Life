@@ -119,7 +119,7 @@ namespace RYANS_UTILITIES {
 				auto rekt = RECT{ };
 				::GetClientRect(m_Handle, &rekt);
 				InvalidateRect(m_Handle, &rekt, false);
-				SendMessage(m_Handle, WM_PAINT, NULL, NULL);
+				UpdateWindow(m_Handle);
 				return *this;
 			}
 
@@ -127,7 +127,7 @@ namespace RYANS_UTILITIES {
 				auto rekt = RECT{ };
 				::GetClientRect(m_Handle, &rekt);
 				InvalidateRect(m_Handle, &rekt, false);
-				SendMessage(m_Handle, WM_PAINT, NULL, NULL);
+				UpdateWindow(m_Handle);
 				return *this;
 			}
 		};

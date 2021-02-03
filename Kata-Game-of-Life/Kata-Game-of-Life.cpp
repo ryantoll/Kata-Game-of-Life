@@ -15,10 +15,21 @@ constexpr auto ID_PLAY_PAUSE = 1002ul;
 
 auto playPauseDisplay = WINDOW{ };
 
-//#define EXTENDED_LIFESTATE_COLORING
+auto simpleBrushes = map<LIFE_STATE, HBRUSH>{
+    { LIFE_STATE::STABLE_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::RECENTLY_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::ALIVE , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::DYING , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::WILL_LIVE , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::VASCILATING , CreateSolidBrush(RGB(0, 0, 0))},
+    { LIFE_STATE::RECENTLY_GROWN , CreateSolidBrush(RGB(0, 255, 0))},
+    { LIFE_STATE::STABLE_LIVING , CreateSolidBrush(RGB(0, 255, 0))},
+};
+
+#define EXTENDED_LIFESTATE_COLORING
 
 #ifdef EXTENDED_LIFESTATE_COLORING
-auto brushes = map<LIFE_STATE, HBRUSH>{
+auto extendedBrushes = map<LIFE_STATE, HBRUSH>{
     { LIFE_STATE::STABLE_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
     { LIFE_STATE::RECENTLY_DEAD , CreateSolidBrush(RGB(100, 0, 0))},
     { LIFE_STATE::ALIVE , CreateSolidBrush(RGB(0, 0, 255))},
@@ -29,22 +40,14 @@ auto brushes = map<LIFE_STATE, HBRUSH>{
     { LIFE_STATE::STABLE_LIVING , CreateSolidBrush(RGB(255, 255, 255))},
 };
 #else
-auto brushes = map<LIFE_STATE, HBRUSH>{
-    { LIFE_STATE::STABLE_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
-    { LIFE_STATE::RECENTLY_DEAD , CreateSolidBrush(RGB(0, 0, 0))},
-    { LIFE_STATE::ALIVE , CreateSolidBrush(RGB(0, 255, 0))},
-    { LIFE_STATE::DYING , CreateSolidBrush(RGB(0, 255, 0))},
-    { LIFE_STATE::WILL_LIVE , CreateSolidBrush(RGB(0, 0, 0))},
-    { LIFE_STATE::VASCILATING , CreateSolidBrush(RGB(0, 0, 0))},
-    { LIFE_STATE::RECENTLY_GROWN , CreateSolidBrush(RGB(0, 255, 0))},
-    { LIFE_STATE::STABLE_LIVING , CreateSolidBrush(RGB(0, 255, 0))},
-};
-#endif // EXTENDED_LIFESTATE_COLORING
+auto extendedBrushes = simpleBrushes;
+#endif
 
 
 void TogglePause() {
     pause = !pause;
     playPauseDisplay.Text(pause ? "Pause" : "Play");
+    if (pause) { WINDOW{ g_hWnd }.Redraw(); }
 }
 
 LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -88,7 +91,8 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
             WINDOW{ hFrame }.BeginPaint();  // Validate window by explicitly calling BeginPaint() and implicitly calling EndPaint()
         } break;
         case WM_DESTROY: { 
-            for (auto brushPair : brushes) { DeleteObject(brushPair.second); }
+            for (auto brushPair : extendedBrushes) { DeleteObject(brushPair.second); }
+            for (auto brushPair : simpleBrushes) { DeleteObject(brushPair.second); }
             KillTimer(hFrame, timerId);
             PostQuitMessage(0);
         } break;
@@ -121,8 +125,8 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
                 for (auto neighbor : adjacencyList[id]) {
                     WINDOW{ WINDOWS_TABLE::CELL_ID{ neighbor } }.Redraw();  // Re-render neighbors 
                 }
-                SetFocus(g_hWnd);
                 if (!pause) { TogglePause(); }  // Pause if not already paused
+                SetFocus(g_hWnd);
             } break;
             case WM_PAINT: {
                 const auto& frame = history[history.Generation()];
@@ -130,8 +134,9 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
                 auto state = frame.LifeState(CELL_POSITION{ id });
                 auto myCell = WINDOW{ id };
                 auto rekt = myCell.GetClientRect();
-                auto cellToken = myCell.BeginPaint();
-                FillRect(cellToken, &rekt, brushes[state]);
+                auto paintToken = myCell.BeginPaint();
+                auto& brush = pause ? extendedBrushes[state] : simpleBrushes[state];    // Extra info on pause
+                FillRect(paintToken, &rekt, brush);
             } break;
             default: { DefWindowProc(hCell, message, wParam, lParam); }
     }
