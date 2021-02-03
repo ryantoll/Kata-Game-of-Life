@@ -55,7 +55,7 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
         case WM_CREATE: { 
             g_hWnd = hFrame;
             g_table.InitializeTable();
-            for (auto position : allPositions) {
+            for (auto& position : allPositions) {
                 allCells.push_back(WINDOW{ WINDOWS_TABLE::CELL_ID{ position } });
             }
             auto pos = WINDOW_POSITION{ 650 , 0 };
@@ -77,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
                 switch (wmId) {
                     case WM_ADVANCE_GENERATION: {
                         history.Advance();
-                        for (auto cell : allCells) { cell.Redraw(); }
+                        for (auto& cell : allCells) { cell.Redraw(); }
                         if (!pause) { 
                             SetTimer(g_hWnd, timerId, timeIncrement, (TIMERPROC) NULL);
                         }
@@ -88,11 +88,11 @@ LRESULT CALLBACK WndProc(HWND hFrame, UINT message, WPARAM wParam, LPARAM lParam
                 }
             } break;
         case WM_PAINT: { 
-            WINDOW{ hFrame }.BeginPaint();  // Validate window by explicitly calling BeginPaint() and implicitly calling EndPaint()
+            static_cast<void>(WINDOW{ hFrame }.BeginPaint());  // Validate window by explicitly calling BeginPaint() and implicitly calling EndPaint()
         } break;
         case WM_DESTROY: { 
-            for (auto brushPair : extendedBrushes) { DeleteObject(brushPair.second); }
-            for (auto brushPair : simpleBrushes) { DeleteObject(brushPair.second); }
+            for (auto& brushPair : extendedBrushes) { DeleteObject(brushPair.second); }
+            for (auto& brushPair : simpleBrushes) { DeleteObject(brushPair.second); }
             KillTimer(hFrame, timerId);
             PostQuitMessage(0);
         } break;
@@ -119,10 +119,9 @@ LRESULT CALLBACK CellWindowProc(HWND hCell, UINT message, WPARAM wParam, LPARAM 
         case WM_LBUTTONDOWN: {
                 auto& frame = history[history.Generation()];
                 auto id = WINDOWS_TABLE::CELL_ID{ hCell };
-                auto state = frame[id].State();
                 frame[id].TogleDeadAlive();
                 WINDOW{ id }.Redraw();
-                for (auto neighbor : adjacencyList[id]) {
+                for (auto& neighbor : adjacencyList[id]) {
                     WINDOW{ WINDOWS_TABLE::CELL_ID{ neighbor } }.Redraw();  // Re-render neighbors 
                 }
                 if (!pause) { TogglePause(); }  // Pause if not already paused

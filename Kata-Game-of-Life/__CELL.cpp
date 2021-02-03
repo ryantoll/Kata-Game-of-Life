@@ -13,7 +13,7 @@ ALL_CELL_POSITIONS::ALL_CELL_POSITIONS() {
 }
 
 ADJACENCY_LIST::ADJACENCY_LIST() {
-	for (auto position : allPositions) {
+	for (auto& position : allPositions) {
 		auto iMin = position.row == 0 ? 0 : -1;
 		auto iMax = position.row == layoutWidth - 1 ? 0 : 1;
 
@@ -23,8 +23,6 @@ ADJACENCY_LIST::ADJACENCY_LIST() {
 
 			for (auto j = jMin; j <= jMax; ++j) {
 				if (i == 0 && j == 0) { continue; }
-				auto row = position.row + i;
-				auto col = position.column + j;
 				adjacencyList[position.row][position.column].emplace_back(position.row + i, position.column + j);
 			}
 		}
@@ -56,7 +54,7 @@ TIME_SLICE::PROXY_CELL& TIME_SLICE::PROXY_CELL::State(LIFE_STATE state) noexcept
 
 	if (m_Frame->status == STATUS::GENERATED) { m_Frame->status = STATUS::MANUALLY_CHANGED; }
 
-	for (auto position: adjacencyList[m_Position]) {
+	for (auto& position: adjacencyList[m_Position]) {
 		auto& neighborCell = (*m_Frame).m_Layout[position.row][position.column];
 		neighborCell.neighborCount += increment;
 
@@ -94,18 +92,17 @@ const TIME_SLICE& LIFE_HISTORY::Advance() noexcept {
 	return m_History.back();
 }
 
-TIME_SLICE& LIFE_HISTORY::operator[] (unsigned long generationNumber) noexcept {
+TIME_SLICE& LIFE_HISTORY::operator[] (size_t generationNumber) noexcept {
 	return m_History[generationNumber];
 }
 
-[[nodiscard]] unsigned long LIFE_HISTORY::Generation() const noexcept {
-	//return m_Generation;
+[[nodiscard]] size_t LIFE_HISTORY::Generation() const noexcept {
 	return m_History.size() - 1;
 }
 
 unsigned int SurroundingCellNumber(const CELL_POSITION position, const TIME_SLICE& timeSlice) noexcept {
 	auto count = unsigned int{ 0 };
-	for (auto pos: adjacencyList[position]) {
+	for (auto& pos: adjacencyList[position]) {
 		if (EnumHasFlag<LIFE_STATE>(timeSlice.LifeState(pos), LIFE_STATE::ALIVE)) {
 			++count;
 		}
@@ -122,7 +119,7 @@ void TIME_SLICE::SetNextCellState(const CELL_POSITION position, const TIME_SLICE
 	// Next Neighbor Count
 	auto& count = nextGeneration[position].m_Cell->neighborCount;
 	count = 0;
-	for (auto pos : adjacencyList[position]) {
+	for (auto& pos : adjacencyList[position]) {
 		if (EnumHasFlag<LIFE_STATE>(previousGeneration.LifeState(pos), LIFE_STATE::WILL_LIVE)) {
 			++count;
 		}

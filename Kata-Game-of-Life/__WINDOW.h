@@ -34,7 +34,7 @@ namespace RYANS_UTILITIES {
 			PAINT_TOKEN& operator=(const PAINT_TOKEN & token) = delete;
 			PAINT_TOKEN(PAINT_TOKEN&& token) = default;
 			PAINT_TOKEN& operator=(PAINT_TOKEN&& token) = default;
-			explicit operator bool() const noexcept { return m_DeviceContext; }
+			explicit operator bool() const noexcept { return m_DeviceContext == nullptr; }
 			operator HDC() const noexcept { return m_DeviceContext; }
 		};
 

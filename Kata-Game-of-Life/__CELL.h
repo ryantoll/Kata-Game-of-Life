@@ -8,9 +8,9 @@ constexpr auto layoutHeight = 25;
 
 struct CELL_POSITION {
 	constexpr CELL_POSITION() = default;
-	constexpr CELL_POSITION(const int row_input, const int column_input) : row{ row_input }, column{ column_input } { }
-	int row{ 0 };
-	int column{ 0 };
+	constexpr CELL_POSITION(const unsigned int row_input, const unsigned int column_input) : row{ row_input }, column{ column_input } { }
+	unsigned int row{ 0 };
+	unsigned int column{ 0 };
 };
 
 struct ALL_CELL_POSITIONS{
@@ -69,7 +69,7 @@ inline LIFE_STATE operator>> (LIFE_STATE state, const unsigned int shift) {
 	return static_cast<LIFE_STATE>(static_cast<std::underlying_type_t<LIFE_STATE>>(state) >> shift);
 }
 
-struct TIME_SLICE {
+class TIME_SLICE {
 	friend class LIFE_HISTORY;
 	struct CELL {
 		LIFE_STATE state{ LIFE_STATE::STABLE_DEAD };
@@ -125,10 +125,10 @@ public:
 	const TIME_SLICE& Advance() noexcept;
 
 	// Get layout of generation #
-	TIME_SLICE& operator[] (unsigned long generationNumber) noexcept;
+	TIME_SLICE& operator[] (size_t generationNumber) noexcept;
 
 	// Get generation count
-	[[nodiscard]] unsigned long Generation() const noexcept;
+	[[nodiscard]] size_t Generation() const noexcept;
 private:
 	void CalculateNextGeneration() noexcept;
 };
