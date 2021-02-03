@@ -5,10 +5,8 @@ One of the inspirations for this ongoing focus on interface design is a 2020 con
 Instructions:
 
 Click cell to toggle dead/alive
-Press return-key to progress system by 1 generation
-Hold return-key to rapidly progress system
-
-Note: There may be occasional rendering issues upon startup. If so, re-size the window. This will trigger a fresh redraw and will likely fix the issue.
+Cell click pauses progression to enable editing
+Return-key toggles Play/Pause
 
 Design Features:
 
