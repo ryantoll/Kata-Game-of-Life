@@ -7,6 +7,9 @@ Instructions:
 Click cell to toggle dead/alive
 Cell click pauses progression to enable editing
 Return-key toggles Play/Pause
+Left-arrow-key rewinds one generation, with editing locked for past generations (see generation num display)
+Right-arrow-key advances one generation, calculating a new one if needed
+Button on right toggles extra life state display
 
 Design Features:
 
@@ -16,7 +19,7 @@ In a similar vein, this project inspired the supporting PAINT_TOKEN class. This 
 
 The cells have several layers of utility meant to make facilitate clean, correct code. First, there are set lists of all cell positions and all of their neighbors. These make it easier to iterate through all relevant cells with a simple range-for loop rather than complicated nesting of for-loops. One could easily imagine looping through cell X-position, cell Y-position, neighbor X-position, & neighbor Y-position... four layer deep to update all cells and querey all neighbors. This creates simpler code and less calculation per loop. Second, these lists are given some container-like access. They support the bracket operator to access elements (decomposing a single position into row, column elements) and supporting .begin() and .end() operations as relevant to support a ranged-for loop. Third, the PROXY_CELL class gives consumers indirect access to CELLs while still retaining control over invariants. (Most relevant here is informing their neighbors when their life state changes.)
 
-This program also begins to extend the possibilities of the base game by introducing extended life-state tracking of cells. Instead of simply being dead/alive, cells are now tracked based upon three generations (1 past, present, 1 future) of dead/alive. Conceptually, this tells consumers much more about where a cell has been and where it's going. This introduces new options for visualization built into the library rather than requiring consumers to track & compare each cell on their own. Practically, this is achieved with bitmasking of enums. There are three foundational states (WAS_ALIVE, ALIVE, WILL_LIVE), which then expand to 8 (=2^3) foundational and composite states. Scoped enums are preferred since they avoid problems of unintentional misuse, however this introduced a new issue for bitmask operations. The lack of implicit conversion to an integral type interferes with exactly the sort of bitwise operations desired here. There must be an explicit cast both to and from to achieve the desired result. Four utility functions were then created to facilitate this. They were created as a generic template added to the Utilities.h file for their universal applicability. They hide the verbose casting back & forth, while also perfectly type-matching with template parameters. Note also that this issue may be trivial in C++20 with the new "using enum" directive, but it is too soon to expect consistent support of all the new language features.
+This program also begins to extend the possibilities of the base game by introducing extended life-state tracking of cells. Instead of simply being dead/alive, cells are now tracked based upon three generations (1 past, present, 1 future) of dead/alive. Conceptually, this tells consumers much more about where a cell has been and where it's going. This introduces new options for visualization built into the library rather than requiring consumers to track & compare each cell on their own. Practically, this is achieved with bitmasking of enums. There are three foundational states (WAS_ALIVE, ALIVE, WILL_LIVE), which then expand to 8 (=2^3) foundational and composite states. Scoped enums are preferred since they avoid problems of unintentional misuse, however this introduced a new issue for bitmask operations. The lack of implicit conversion to an integral type interferes with exactly the sort of bitwise operations desired here. There must be an explicit cast both to and from to achieve the desired result. Four utility functions were then created to facilitate this. They were created as a generic template added to the Utilities.h file for their universal applicability. They hide the verbose casting back & forth, while also perfectly type-matching with template parameters.
 
 Possible Changes:
 
@@ -28,10 +31,8 @@ Third, UI/UX can be improved. Again, this is not a core objective, but certainly
 
 Further Work:
 
-1. Make the "game" progress based upon a timer rather than a keystroke. Add Play/Pause button to support this. Editing a cell automatically pauses the game to ensure consistent calculations.
+1. Performance upgrades as discussed above based upon testing.
 
-2. Performance upgrades as discussed above based upon testing.
+2. Further GUI library upgrades as needs arise.
 
-3. Further GUI library upgrades as needs arise.
-
-4. Improved rendering speed as this seems to be the primary bottleneck.
+3. Improved rendering speed as this seems to be the primary bottleneck.

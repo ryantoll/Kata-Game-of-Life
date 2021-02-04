@@ -140,6 +140,11 @@ namespace RYANS_UTILITIES {
 		}
 
 		// Create a child window
+		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, unsigned long id, WINDOW_POSITION position, WINDOW_DIMENSIONS dimensions) {
+			return ConstructChildWindow(type, parent, reinterpret_cast<HMENU>(static_cast<UINT_PTR>(id)), position, dimensions);
+		}
+
+		// Create a child window
 		inline WINDOW ConstructChildWindow(const std::string& type, HWND parent, HMENU id, WINDOW_POSITION position) {
 			return ConstructChildWindow(type, parent, id, position, WINDOW_DIMENSIONS{ });
 		}
