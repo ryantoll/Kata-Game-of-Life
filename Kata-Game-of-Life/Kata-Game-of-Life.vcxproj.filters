@@ -47,13 +47,13 @@
     <ClCompile Include="Windows_Infrastructure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="About.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="__Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="__CELL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window-Input-Mapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

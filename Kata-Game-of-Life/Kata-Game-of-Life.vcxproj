@@ -151,7 +151,7 @@
     <ClInclude Include="__WINDOW.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="About.cpp" />
+    <ClCompile Include="Window-Input-Mapping.cpp" />
     <ClCompile Include="Kata-Game-of-Life.cpp" />
     <ClCompile Include="Windows_Infrastructure.cpp" />
     <ClCompile Include="__CELL.cpp" />
