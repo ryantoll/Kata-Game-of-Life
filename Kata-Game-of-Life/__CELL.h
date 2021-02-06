@@ -123,9 +123,10 @@ class LIFE_HISTORY {
 
 public:
 	const TIME_SLICE& Advance() noexcept;
+	TIME_SLICE& GetLatestGeneration() noexcept { return m_History.back(); }
 
 	// Get layout of generation #
-	TIME_SLICE& operator[] (size_t generationNumber) noexcept;
+	const TIME_SLICE& operator[] (size_t generationNumber) const noexcept;
 
 	// Get generation count
 	[[nodiscard]] size_t Generation() const noexcept;

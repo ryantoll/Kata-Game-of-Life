@@ -92,7 +92,7 @@ const TIME_SLICE& LIFE_HISTORY::Advance() noexcept {
 	return m_History.back();
 }
 
-TIME_SLICE& LIFE_HISTORY::operator[] (size_t generationNumber) noexcept {
+const TIME_SLICE& LIFE_HISTORY::operator[] (size_t generationNumber) const noexcept {
 	return m_History[generationNumber];
 }
 

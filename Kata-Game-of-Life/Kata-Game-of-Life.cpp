@@ -65,7 +65,7 @@ void CheckTimer(HWND hFrame) {
 
 void ToggleCellState(HWND hCell) {
     if (generationIndex < history.Generation()) { return; }   // Only allow editing of latest generation
-    auto& frame = history[generationIndex];
+    auto& frame = history.GetLatestGeneration();
     auto id = WINDOWS_TABLE::CELL_ID{ hCell };
     frame[id].TogleDeadAlive();
     WINDOW{ id }.Redraw();
