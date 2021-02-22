@@ -41,7 +41,7 @@ LIFE_STATE TIME_SLICE::PROXY_CELL::TogleDeadAlive() noexcept {
 
 TIME_SLICE::PROXY_CELL& TIME_SLICE::PROXY_CELL::State(LIFE_STATE state) noexcept {
 	auto increment = 0;
-	auto isAlive = EnumHasFlag<LIFE_STATE>(state, LIFE_STATE::ALIVE);
+	auto isAlive = EnumHasFlag(state, LIFE_STATE::ALIVE);
 	if (state == m_Cell->state) { return *this; }
 	else if (isAlive) { increment = 1; }
 	else { increment = -1; }
@@ -60,8 +60,8 @@ TIME_SLICE::PROXY_CELL& TIME_SLICE::PROXY_CELL::State(LIFE_STATE state) noexcept
 
 		// Update predicted next generation expected life state
 		if (neighborCell.neighborCount == 3 || 
-			neighborCell.neighborCount == 2 && EnumHasFlag<LIFE_STATE>(neighborCell.state, LIFE_STATE::ALIVE)) {
-			neighborCell.state = EnumAddFlag<LIFE_STATE>(neighborCell.state, LIFE_STATE::WILL_LIVE);
+			neighborCell.neighborCount == 2 && EnumHasFlag(neighborCell.state, LIFE_STATE::ALIVE)) {
+			neighborCell.state = EnumAddFlag(neighborCell.state, LIFE_STATE::WILL_LIVE);
 		}
 		else { neighborCell.state = EnumRemoveFlag(neighborCell.state, LIFE_STATE::WILL_LIVE); }
 	}
@@ -103,7 +103,7 @@ const TIME_SLICE& LIFE_HISTORY::operator[] (size_t generationNumber) const noexc
 unsigned int SurroundingCellNumber(const CELL_POSITION position, const TIME_SLICE& timeSlice) noexcept {
 	auto count = unsigned int{ 0 };
 	for (auto& pos: adjacencyList[position]) {
-		if (EnumHasFlag<LIFE_STATE>(timeSlice.LifeState(pos), LIFE_STATE::ALIVE)) {
+		if (EnumHasFlag(timeSlice.LifeState(pos), LIFE_STATE::ALIVE)) {
 			++count;
 		}
 	}
@@ -120,7 +120,7 @@ void TIME_SLICE::SetNextCellState(const CELL_POSITION position, const TIME_SLICE
 	auto& count = nextGeneration[position].m_Cell->neighborCount;
 	count = 0;
 	for (auto& pos : adjacencyList[position]) {
-		if (EnumHasFlag<LIFE_STATE>(previousGeneration.LifeState(pos), LIFE_STATE::WILL_LIVE)) {
+		if (EnumHasFlag(previousGeneration.LifeState(pos), LIFE_STATE::WILL_LIVE)) {
 			++count;
 		}
 	}
@@ -133,8 +133,8 @@ void TIME_SLICE::CalculateNeighborCount(const CELL_POSITION position, TIME_SLICE
 void TIME_SLICE::CalculateNextLifeState(const CELL_POSITION position, TIME_SLICE& nextGeneration) noexcept {
 	auto neighborCount = nextGeneration.NeighborCount(position);
 	auto& state = nextGeneration[position].m_Cell->state;
-	if (neighborCount == 3 || neighborCount == 2 && EnumHasFlag<LIFE_STATE>(state, LIFE_STATE::ALIVE)) {
-		state = EnumAddFlag<LIFE_STATE>(state, LIFE_STATE::WILL_LIVE);
+	if (neighborCount == 3 || neighborCount == 2 && EnumHasFlag(state, LIFE_STATE::ALIVE)) {
+		state = EnumAddFlag(state, LIFE_STATE::WILL_LIVE);
 	}
 }
 
