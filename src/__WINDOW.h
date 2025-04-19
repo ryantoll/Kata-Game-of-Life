@@ -2,7 +2,7 @@
 #define WINDOWS_GUI_FOUNDATION_LIBRARY
 
 #include "framework.h"
-//#include <Windows.h>
+#include <Windows.h>
 //#include <string>
 #include "__Utilities.h"
 
