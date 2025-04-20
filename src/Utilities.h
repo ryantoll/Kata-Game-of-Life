@@ -1,12 +1,12 @@
-#ifndef __RYANS_UTILITIES
-#define __RYANS_UTILITIES
+#ifndef RYANS_UTILITIES_H
+#define RYANS_UTILITIES_H
 
 #include "framework.h"
 
 namespace RYANS_UTILITIES {
 
 // Windows Utilities
-//#ifdef _WINDOWS
+#ifdef _WINDOWS
 
 	// Wrapper for Windows char conversion utility function
 	inline std::wstring StringToWstring(const std::string& InputString) noexcept {
@@ -46,7 +46,7 @@ namespace RYANS_UTILITIES {
 
 	// Append string to text of an Edit Box
 	inline void Append_String_to_Edit_Box(HWND window, const std::string& text) noexcept { AppendWstringToEditBox(window, StringToWstring(text)); }
-//#endif // _WINDOWS
+#endif // _WINDOWS
 
 	// Tool used for parsing text.
 	// Tests for enclosing chars and clears them out. Returns bool indicating success/failure.
@@ -113,4 +113,4 @@ namespace RYANS_UTILITIES {
 	}
 }
 
-#endif // !__RYANS_UTILITIES
+#endif // !RYANS_UTILITIES_H

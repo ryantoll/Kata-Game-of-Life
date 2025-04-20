@@ -1,6 +1,6 @@
 #include "framework.h"
-#include "__Table.h"
-#include "__WINDOW.h"
+#include "Table.h"
+#include "WINDOW.h"
 
 using namespace std;
 using namespace RYANS_UTILITIES;

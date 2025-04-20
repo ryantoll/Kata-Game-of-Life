@@ -1,8 +1,8 @@
 #ifndef TABLE_CLASS_H
 #define TABLE_CLASS_H
 #include "framework.h"
-#include "__Cell.h"
-#include "__WINDOW.h"
+#include "Cell.h"
+#include "WINDOW.h"
 
 // Table class specialized for a Windows OS GUI
 class WINDOWS_TABLE {
