@@ -6,7 +6,6 @@ target_sources(Kata-Game-of-Life PRIVATE
 	Window-Input-Mapping.cpp
 	Kata-Game-of-Life.cpp
 	Kata-Game-of-Life.rc
-	CELL.cpp
 	Table.cpp
 )
 
@@ -16,7 +15,11 @@ target_sources(utilities PUBLIC FILE_SET CXX_MODULES FILES Utilities.ixx)
 add_library(window-utilities)
 target_compile_definitions(window-utilities PRIVATE "UNICODE;_UNICODE")
 target_sources(window-utilities PUBLIC FILE_SET CXX_MODULES FILES Window-Utilities.ixx)
-target_link_libraries(window-utilities utilities)
+target_link_libraries(window-utilities PUBLIC utilities)
+
+add_library(lib_cell)
+target_sources(lib_cell PUBLIC FILE_SET CXX_MODULES FILES Cell.ixx)
+target_link_libraries(lib_cell PUBLIC utilities)
 
 set_target_properties(Kata-Game-of-Life PROPERTIES CXX_EXTENSIONS OFF)
-target_link_libraries(Kata-Game-of-Life PRIVATE utilities window-utilities)
+target_link_libraries(Kata-Game-of-Life PRIVATE utilities window-utilities lib_cell)
