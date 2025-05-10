@@ -1,8 +1,9 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.16)
-set(CMAKE_CXX_STANDARD 17)
+cmake_minimum_required (VERSION 3.28.0)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable Hot Reload for MSVC compilers if supported.

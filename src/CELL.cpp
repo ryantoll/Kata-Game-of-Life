@@ -1,6 +1,7 @@
+import utilities;
 #include "framework.h"
 #include "CELL.h"
-#include "Utilities.h"
+
 using namespace std;
 using namespace RYANS_UTILITIES;
 // Add this cpp file
