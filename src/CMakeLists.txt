@@ -13,9 +13,6 @@ target_sources(Kata-Game-of-Life PRIVATE
 )
 
 add_library(utilities)
-target_compile_definitions(utilities
-  PRIVATE "UNICODE;_UNICODE"
-)
 target_sources(utilities
   PUBLIC FILE_SET CXX_MODULES FILES Utilities.ixx
 )

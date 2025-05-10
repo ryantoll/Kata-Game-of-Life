@@ -1,10 +1,12 @@
-#include "framework.h"
+#include <string>
+#include <type_traits>
+
 export module utilities;
 
-namespace RYANS_UTILITIES {
+export namespace RYANS_UTILITIES {
 	// Tool used for parsing text.
 	// Tests for enclosing chars and clears them out. Returns bool indicating success/failure.
-	export inline bool ClearEnclosingChars(const char c1, const char c2, std::string& text) noexcept {
+	inline bool ClearEnclosingChars(const char c1, const char c2, std::string& text) noexcept {
 		if (text.size() < 2) { return false; }
 		if (text[0] != c1 || text[text.size() - 1] != c2) { return false; }
 		text.erase(0, 1);
@@ -14,7 +16,7 @@ namespace RYANS_UTILITIES {
 
 	// Tool used for parsing text.
 	// Tests for enclosing wcahr_t and clears them out. Returns bool indicating success/failure.
-	export inline bool ClearEnclosingChars(const wchar_t c1, const wchar_t c2, std::wstring& text) noexcept {
+	inline bool ClearEnclosingChars(const wchar_t c1, const wchar_t c2, std::wstring& text) noexcept {
 		if (text.size() < 2) { return false; }
 		if (text[0] != c1 || text[text.size() - 1] != c2) { return false; }
 		text.erase(0, 1);
@@ -25,7 +27,7 @@ namespace RYANS_UTILITIES {
 	// Test if a scoped (class) enum has the specified flag
 	// The "state" is expected to be an enum that uses bit-masking to combine multiple flags
 	// Variable "hasFlag" is the flag of interest, which my be a component or composite flag
-	export template<class MyEnum>
+	template<class MyEnum>
 	bool EnumHasFlag(MyEnum state, MyEnum hasFlag) {
 		return static_cast<MyEnum>(
 			static_cast<std::underlying_type_t<MyEnum>>(state) &
@@ -36,7 +38,7 @@ namespace RYANS_UTILITIES {
 	// Add the specified flag to a scoped (class) enum
 	// The "state" is expected to be an enum that uses bit-masking to combine multiple flags
 	// Variable "addFlag" is the flag of interest, which my be a component or composite flag
-	export template<class MyEnum>
+	template<class MyEnum>
 	MyEnum EnumAddFlag(MyEnum state, MyEnum addFlag) {
 		return static_cast<MyEnum>(
 			static_cast<std::underlying_type_t<MyEnum>>(state) |
@@ -47,7 +49,7 @@ namespace RYANS_UTILITIES {
 	// Remove the specified flag from a scoped (class) enum
 	// The "state" is expected to be an enum that uses bit-masking to combine multiple flags
 	// Variable "removeFlag" is the flag of interest, which my be a component or composite flag
-	export template<class MyEnum>
+	template<class MyEnum>
 	MyEnum EnumRemoveFlag(MyEnum state, MyEnum removeFlag) {
 		return static_cast<MyEnum>(
 			static_cast<std::underlying_type_t<MyEnum>>(state) &
@@ -58,7 +60,7 @@ namespace RYANS_UTILITIES {
 	// Toggle the specified flag in a scoped (class) enum
 	// The "state" is expected to be an enum that uses bit-masking to combine multiple flags
 	// Variable "removeFlag" is the flag of interest, which my be a component or composite flag
-	export template<class MyEnum>
+	template<class MyEnum>
 	MyEnum EnumToggleFlag(MyEnum state, MyEnum toggleFlag) {
 		return static_cast<MyEnum>(
 			static_cast<std::underlying_type_t<MyEnum>>(state) ^
