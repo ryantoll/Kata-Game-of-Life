@@ -1,11 +1,15 @@
-#ifndef WINDOWS_GUI_FOUNDATION_LIBRARY
-#define WINDOWS_GUI_FOUNDATION_LIBRARY
-
 import utilities;
-#include "framework.h"
-#include <Windows.h>
+#include "targetver.h"
+#include "Resource.h"
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+// Windows Header Files
+#include <windows.h>
+#include <memory>
+#include <string>
 
-namespace RYANS_UTILITIES {
+export module window_utilities;
+
+export namespace RYANS_UTILITIES {
 
 // Windows Utilities
 
@@ -208,5 +212,3 @@ inline WINDOW ConstructTopLevelWindow(const std::string& type, HINSTANCE inst, c
 
 }
 }
-
-#endif // !WINDOWS_GUI_FOUNDATION_LIBRARY

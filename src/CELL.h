@@ -1,7 +1,8 @@
 #ifndef CELL_CLASS_H
 #define CELL_CLASS_H
+
 #include "framework.h"
-#include "WINDOW.h"
+
 
 constexpr auto layoutWidth = 25;
 constexpr auto layoutHeight = 25;

@@ -1,6 +1,6 @@
+import window_utilities;
 #include "framework.h"
 #include "Table.h"
-#include "WINDOW.h"
 
 using namespace std;
 using namespace RYANS_UTILITIES;
