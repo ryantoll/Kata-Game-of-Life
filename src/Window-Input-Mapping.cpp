@@ -1,4 +1,5 @@
 #include "Kata-Game-of-Life.h"
+#include "Resource.h"
 
 // Window proceedure for the top-level frame window
 // Dispatches window messages to appropriate functions

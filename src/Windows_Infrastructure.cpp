@@ -1,4 +1,7 @@
 /// Entrypoint for application
+#include "targetver.h"
+#include "Resource.h"
+#include <Windows.h>
 #include "Kata-Game-of-Life.h"
 
 #define MAX_LOADSTRING 100
