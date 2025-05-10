@@ -1,4 +1,5 @@
 #include "Kata-Game-of-Life.h"
+#include <stdexcept>
 
 void InitializeGame(HWND hFrame) {
     g_hWnd = hFrame;
@@ -25,7 +26,7 @@ void TogglePause() {
 // Move display forward/backward through generations
 // Advancing past the end calculates one new generation and displays that one
 void StepGeneration(int step) {
-    if (step == 0) { throw invalid_argument{ "A step size of zero is trivial." }; }
+    if (step == 0) { throw std::invalid_argument{ "A step size of zero is trivial." }; }
     else if (step > 0 && generationIndex == history.Generation()) {
         history.Advance();
         ++generationIndex;

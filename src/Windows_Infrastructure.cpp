@@ -1,7 +1,4 @@
-// Kata-Game-of-Life.cpp : Defines the entry point for the application.
-//
-
-#include "framework.h"
+/// Entrypoint for application
 #include "Kata-Game-of-Life.h"
 
 #define MAX_LOADSTRING 100

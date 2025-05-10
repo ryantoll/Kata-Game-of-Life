@@ -1,9 +1,27 @@
 #pragma once
-#include "framework.h"
-#include "Table.h"
+
+import utilities;
+import window_utilities;
+import lib_cell;
+import lib_table;
+#include "targetver.h"
+#include "Resource.h"
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+// Windows Header Files
+#include <windows.h>
+#include <map>
+#include <string>
+#include <vector>
+
+// Global Variables:
+extern HINSTANCE g_hInst;                              // current instance
+extern HWND g_hWnd;                                    // Handle of top-level window
+
 using namespace std;
 using namespace RYANS_UTILITIES;
 using namespace RYANS_UTILITIES::WINDOWS_GUI;
+using namespace cell;
+using namespace table;
 
 inline auto g_table = WINDOWS_TABLE{ };
 inline auto allCells = vector<WINDOW>{ };
